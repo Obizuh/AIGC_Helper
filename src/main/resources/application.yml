@@ -1,0 +1,66 @@
+spring:
+  application:
+    name: aigc_helper
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/aigc?useSSL=false&serverTimezone=Asia/Shanghai
+    password: password
+    username: root
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: qwen3:4b
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      base-url: https://dashscope.aliyuncs.com/compatible-mode
+      chat:
+        options:
+          model: qwen-turbo-latest
+          temperature: 0.8
+      embedding:
+        options:
+          model: text-embedding-v4  # 向量模型名称
+          dimensions: 1024  # 向量维度
+
+  # 文件上传配置
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB        # 单个文件最大大小
+      max-request-size: 200MB    # 整个请求最大大小（支持多文件上传）
+      file-size-threshold: 2KB   # 文件写入磁盘的阈值
+      resolve-lazily: false      # 是否延迟解析文件
+
+server:
+  port: 8080
+  # Tomcat配置
+  tomcat:
+    max-swallow-size: 200MB      # Tomcat最大请求体大小
+    max-http-form-post-size: 200MB  # HTTP POST表单最大大小
+
+logging:
+  level:
+    # Spring AI相关日志
+    org.springframework.ai.chat.client.advisor: debug
+    org.springframework.ai.chat.client: debug
+    org.springframework.ai.openai: debug
+
+    # 项目主要包日志
+    com.example.aigc_helper: info
+    com.example.aigc_helper.controller.ChatController: info
+    com.example.aigc_helper.service.impl.ChatServiceImpl: info
+
+    # 文件上传相关日志
+    org.springframework.web.multipart: debug
+
+    # 数据库相关日志
+    com.example.aigc_helper.mapper: debug
+
+    # 根日志级别
+    root: info
+
+  # 日志输出格式
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%logger{50}] - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%logger{50}] - %msg%n"
